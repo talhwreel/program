@@ -3,13 +3,15 @@ import hashlib
 import datetime
 import msvcrt
 import time
+from pypresence import Presence
 
+# Lisans verileri
 licenses = {
     "talhatester": {
         "username": "Talha",
         "expiration_date": "2025-12-31"
     },
-        "woozie": {
+    "woozie": {
         "username": "Rawien",
         "expiration_date": "2026-12-31"
     },
@@ -19,6 +21,25 @@ licenses = {
     }
 }
 
+# Discord Rich Presence başlatma fonksiyonu
+def start_discord_presence():
+    try:
+        client_id = "1352643025288953938"  # Discord Developer Portal'dan aldığın ID
+        RPC = Presence(client_id)
+        RPC.connect()
+        
+        RPC.update(
+            state="Dark Loader",  
+            details="Dark Proxy V1",  
+            large_image="dark",  # Discord Developer paneline yüklediğin büyük resmin adı
+            small_image="dark",   # Küçük resim varsa buraya ekle
+            start=time.time()  # Zaman sayacı başlatır
+        )
+        print(colored_text("", 'green'))
+    except Exception as e:
+        print(colored_text(f"Discord Presence başlatılamadı: {e}", 'red'))
+
+# Lisans doğrulama
 def validate_license(license_key):
     try:
         license_info = licenses.get(license_key)
@@ -32,7 +53,6 @@ def validate_license(license_key):
             print(colored_text("Lisans anahtarınızın süresi dolmuş! discord adresinden yenileyin!", 'red'))
             return None
         
-
         remaining_time = expiration_date - datetime.datetime.now()
         print(f"\n{colored_text('Lisansınızın geçerlilik süresi:', 'yellow')} {remaining_time.days} gün kaldı.\n")
         
@@ -42,6 +62,7 @@ def validate_license(license_key):
         input("Hata oluştu. Kapanmadan önce Enter'a basın...")
         return None
 
+# Terminal renk fonksiyonu
 def colored_text(text, color):
     colors = {
         'red': '\033[91m',
@@ -55,7 +76,7 @@ def colored_text(text, color):
     }
     return f"{colors.get(color, colors['white'])}{text}{colors['reset']}"
 
-
+# ASCII ART gösterme
 def display_ascii_art():
     art = '''\033[94m
  ██████████                       █████                
@@ -79,7 +100,6 @@ def display_ascii_art():
                                               ░░░░░░       
 \033[0m'''
 
-
     colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'] 
     for i in range(10):
         color = colors[i % len(colors)]
@@ -87,12 +107,12 @@ def display_ascii_art():
         time.sleep(0.5) 
         os.system('cls' if os.name == 'nt' else 'clear') 
 
-
+# Kullanıcıdan lisans al
 def get_license():
     license_key = input(colored_text("Lisans anahtarınızı girin: ", 'green'))
     return license_key
 
-
+# Menü gösterme fonksiyonu
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
     print(colored_text("1. Proxy'i çalıştır", 'green'))
@@ -105,7 +125,7 @@ def show_menu(username):
     else:
         print(colored_text("Geçersiz seçim!", 'red'))
 
-
+# Ana fonksiyon
 def main():
     if os.name == 'nt':
         os.system("title Dark Proxy V1")
@@ -116,10 +136,10 @@ def main():
     display_ascii_art()
 
     license_key = get_license()
-
     license_info = validate_license(license_key)
 
     if license_info:
+        start_discord_presence()  # Discord Rich Presence başlatılıyor
         show_menu(license_info["username"])
     else:
         print(colored_text("HATA!", 'red'))
