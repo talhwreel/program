@@ -1,122 +1,112 @@
 import os
-import hashlib
+import time
 import datetime
 import msvcrt
-import time
 from pypresence import Presence
 
-licenses = {
-    "talhatester": {
-        "username": "Talha",
-        "expiration_date": "2025-12-31"
-    },
-    "woozie": {
-        "username": "Rawien",
-        "expiration_date": "2026-12-31"
-    },
-    "croismisin": {
-        "username": "Crois",
-        "expiration_date": "2025-06-30"
-    }
+LICENSES = {
+    "talhatester": {"username": "Talha", "expiration_date": "2025-12-31"},
+    "woozie": {"username": "Rawien", "expiration_date": "2026-12-31"},
+    "croismisin": {"username": "Crois", "expiration_date": "2025-06-30"},
 }
-
-def start_discord_presence():
-    try:
-        client_id = "1352643025288953938" 
-        RPC = Presence(client_id)
-        RPC.connect()
-        
-        RPC.update(
-            state="Dark Loader",  
-            details="Dark Proxy V1",  
-            large_image="dark", 
-            small_image="dark", 
-            start=time.time() 
-        )
-        print(colored_text("", 'green'))
-    except Exception as e:
-        print(colored_text(f"Discord Presence başlatılamadı: {e}", 'red'))
-
-def validate_license(license_key):
-    try:
-        license_info = licenses.get(license_key)
-        
-        if not license_info:
-            print(colored_text("Geçersiz lisans anahtarı!", 'red'))
-            return None
-        
-        expiration_date = datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d")
-        if expiration_date < datetime.datetime.now():
-            print(colored_text("Lisans anahtarınızın süresi dolmuş! discord adresinden yenileyin!", 'red'))
-            return None
-        
-        remaining_time = expiration_date - datetime.datetime.now()
-        print(f"\n{colored_text('Lisansınızın geçerlilik süresi:', 'yellow')} {remaining_time.days} gün kaldı.\n")
-        
-        return license_info
-    except Exception as e:
-        print(f"{colored_text('Hata oluştu:', 'red')} {e}")
-        input("Hata oluştu. Kapanmadan önce Enter'a basın...")
-        return None
 
 def colored_text(text, color):
     colors = {
-        'red': '\033[91m',
-        'green': '\033[92m',
-        'yellow': '\033[93m',
-        'blue': '\033[94m',
-        'magenta': '\033[95m',
-        'cyan': '\033[96m',
-        'white': '\033[97m',
-        'reset': '\033[0m'
+        'red': '\033[91m', 'green': '\033[92m', 'yellow': '\033[93m',
+        'blue': '\033[94m', 'magenta': '\033[95m', 'cyan': '\033[96m',
+        'white': '\033[97m', 'reset': '\033[0m'
     }
     return f"{colors.get(color, colors['white'])}{text}{colors['reset']}"
 
-def display_ascii_art():
-    art = '''\033[94m
- ██████████                       █████                
-░░███░░░░███                     ░░███                 
- ░███   ░░███  ██████   ████████  ░███ █████           
- ░███    ░███ ░░░░░███ ░░███░░███ ░███░░███            
- ░███    ░███  ███████  ░███ ░░░  ░██████░             
- ░███    ███  ███░░███  ░███      ░███░░███            
- ██████████  ░░████████ █████     ████ █████           
-░░░░░░░░░░    ░░░░░░░░ ░░░░░     ░░░░ ░░░░░      
- ███████████                                           
-░░███░░░░░███                                          
- ░███    ░███ ████████   ██████  █████ █████ █████ ████
- ░██████████ ░░███░░███ ███░░███░░███ ░░███ ░░███ ░███ 
- ░███░░░░░░   ░███ ░░░ ░███ ░███ ░░░█████░   ░███ ░███ 
- ░███         ░███     ░███ ░███  ███░░░███  ░███ ░███ 
- █████        █████    ░░██████  █████ █████ ░░███████ 
-░░░░░        ░░░░░      ░░░░░░  ░░░░░ ░░░░░   ░░░░░███ 
-                                              ███ ░███ 
-                                             ░░██████  
-                                              ░░░░░░       
-\033[0m'''
+def start_discord_presence():
+    try:
+        client_id = "1352643025288953938"
+        rpc = Presence(client_id)
+        rpc.connect()
+        rpc.update(
+            state="Developed by talhw",
+            details="Bende Dark Loader kullanıyorum, sende kullanmaya ne dersin?",
+            large_image="dark",
+            start=time.time(),
+            buttons=[
+                {"label": "Discord'a Katıl", "url": "https://discord.gg/wYwKZ2gQk8"},
+            ]
+        )
+        print(colored_text("", 'green'))
+    except Exception as e:
+        print(colored_text(f"Hata: {e}", 'red'))
 
-    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'] 
-    for i in range(10):
-        color = colors[i % len(colors)]
-        print(colored_text(art, color))
-        time.sleep(0.5) 
-        os.system('cls' if os.name == 'nt' else 'clear') 
+def validate_license(license_key):
+    license_info = LICENSES.get(license_key)
+    
+    if not license_info:
+        print(colored_text("Geçersiz lisans anahtarı!", 'red'))
+        return None
+    
+    expiration_date = datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d")
+    if expiration_date < datetime.datetime.now():
+        print(colored_text("Lisans süresi dolmuş! Discord'dan yenileyin!", 'red'))
+        return None
+    
+    remaining_days = (expiration_date - datetime.datetime.now()).days
+    print(f"\n{colored_text('Lisans süreniz:', 'yellow')} {remaining_days} gün kaldı.\n")
+    return license_info
+
+def display_ascii_art():
+    art = r"""
+________                __    
+\______ \ _____ _______|  | __
+ |    |  \\__  \\_  __ \  |/ /
+ |    `   \/ __ \|  | \/    < 
+/_______  (____  /__|  |__|_ \
+        \/     \/           \/    
+.__                    .___            
+|  |   _________     __| _/___________ 
+|  |  /  _ \__  \   / __ |/ __ \_  __ \
+|  |_(  <_> ) __ \_/ /_/ \  ___/|  | \/
+|____/\____(____  /\____ |\___  >__|   
+                \/      \/    \/      
+"""
+    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+    for i in range(3):
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(colored_text(art, colors[i % len(colors)]))
+        time.sleep(0.5)
 
 def get_license():
-    license_key = input(colored_text("Lisans anahtarınızı girin: ", 'green'))
-    return license_key
+    return input(colored_text("Lisans anahtarınızı girin: ", 'green'))
+
+def flashing_text(text, duration=3, delay=0.3):
+    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
+    end_time = time.time() + duration
+
+    while time.time() < end_time:
+        for color in colors:
+            print(f"\r{colored_text(text, color)}", end="", flush=True)
+            time.sleep(delay)
+    
+    print(f"\r{colored_text(text, 'green')}")
 
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
-    print(colored_text("1. Hile menüsüne giriş sağla", 'green'))
-    print(colored_text("2. Çıkış", 'red'))
-    choice = input(colored_text("Seçim yapınız: ", 'yellow'))
+    
+    flashing_text("1. Hile menüsüne giriş sağla", duration=2)
+    
+    print(colored_text("\n2. Çıkış", 'red'))
+    
+    choice = input(colored_text("\nSeçiminizi yapınız: ", 'yellow'))
+    
     if choice == "1":
-        print(colored_text("Hile menüsüne bağlantı sağlanamadı, güncelleme bekleniyor.", 'red'))
+        print(colored_text("\nHile menüsüne güncelleme gelmedi, güncelleme bekleniyor...", 'red'))
+        time.sleep(5) 
+        print(colored_text("Program kapatılıyor...", 'red'))
+        exit()
     elif choice == "2":
         print(colored_text("Çıkış yapılıyor...", 'red'))
+        exit()
     else:
-        print(colored_text("Geçersiz seçim!", 'red'))
+        print(colored_text("Geçersiz seçim! Tekrar deneyin.", 'red'))
+        show_menu(username) 
 
 def main():
     if os.name == 'nt':
@@ -134,9 +124,9 @@ def main():
         start_discord_presence()
         show_menu(license_info["username"])
     else:
-        print(colored_text("HATA!", 'red'))
+        print(colored_text("HATA! Geçerli lisans girilmedi.", 'red'))
 
-    print(colored_text("Bizi tercih ettiğiniz için teşekkür ederiz..", 'blue'))
+    print(colored_text("Bizi tercih ettiğiniz için teşekkürler!", 'blue'))
     msvcrt.getch()
 
 if __name__ == "__main__":
