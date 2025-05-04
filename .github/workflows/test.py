@@ -6,8 +6,8 @@ import sys  # Programdan çıkmak için gerekli
 from pypresence import Presence
 
 LICENSES = {
-    "kaancalismayan31": {"username": "Talha", "expiration_date": "2025-12-31"},
-    "berkaycaliskan": {"username": "Crois", "expiration_date": "2025-05-05"},
+    "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
+    "testkey": {"username": "Berkay Çalışkan", "expiration_date": "2025-05-05"},
 }
 
 def colored_text(text, color):
