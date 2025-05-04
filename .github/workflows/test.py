@@ -5,9 +5,8 @@ import msvcrt
 from pypresence import Presence
 
 LICENSES = {
-    "talhatester": {"username": "Talha", "expiration_date": "2025-12-31"},
-    "woozie": {"username": "Rawien", "expiration_date": "2026-12-31"},
-    "croismisin": {"username": "Crois", "expiration_date": "2025-06-30"},
+    "kaancalismayan31": {"username": "Talha", "expiration_date": "2025-12-31"},
+    "berkaycaliskan": {"username": "Crois", "expiration_date": "2025-05-05"},
 }
 
 def colored_text(text, color):
@@ -24,12 +23,12 @@ def start_discord_presence():
         rpc = Presence(client_id)
         rpc.connect()
         rpc.update(
-            state="Developed by talhw",
-            details="Bende Dark Loader kullanıyorum, sende kullanmaya ne dersin?",
+            state="Developed by kaancaliskan",
+            details="Bende Eagle Software'nin valorant yazılımını kullanıyorum, sende kullanmaya ne dersin?",
             large_image="dark",
             start=time.time(),
             buttons=[
-                {"label": "Discord'a Katıl", "url": "https://discord.gg/wYwKZ2gQk8"},
+                {"label": "Telegram", "url": "https://t.me/eaglesoftwar2"},
             ]
         )
         print(colored_text("", 'green'))
@@ -54,18 +53,18 @@ def validate_license(license_key):
 
 def display_ascii_art():
     art = r"""
-________                __    
-\______ \ _____ _______|  | __
- |    |  \\__  \\_  __ \  |/ /
- |    `   \/ __ \|  | \/    < 
-/_______  (____  /__|  |__|_ \
-        \/     \/           \/    
-.__                    .___            
-|  |   _________     __| _/___________ 
-|  |  /  _ \__  \   / __ |/ __ \_  __ \
-|  |_(  <_> ) __ \_/ /_/ \  ___/|  | \/
-|____/\____(____  /\____ |\___  >__|   
-                \/      \/    \/      
+                      .__                               
+  ____ _____     ____ |  |   ____                       
+_/ __ \\__  \   / ___\|  | _/ __ \                      
+\  ___/ / __ \_/ /_/  >  |_\  ___/                      
+ \___  >____  /\___  /|____/\___  >                     
+     \/     \//_____/           \/                      
+              _____  __                                 
+  ___________/ ____\/  |___  _  _______ _______   ____  
+ /  ___/  _ \   __\\   __\ \/ \/ /\__  \\_  __ \_/ __ \ 
+ \___ (  <_> )  |   |  |  \     /  / __ \|  | \/\  ___/ 
+/____  >____/|__|   |__|   \/\_/  (____  /__|    \___  >
+     \/                                \/            \/ 
 """
     colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
     for i in range(3):
@@ -90,7 +89,7 @@ def flashing_text(text, duration=3, delay=0.3):
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
     
-    flashing_text("1. Hile menüsüne giriş sağla", duration=2)
+    flashing_text("1. Hileyi aktif et", duration=2)
     
     print(colored_text("\n2. Çıkış", 'red'))
     
@@ -110,10 +109,10 @@ def show_menu(username):
 
 def main():
     if os.name == 'nt':
-        os.system("title Dark Proxy V1")
+        os.system("title Eagle Software")
         os.system("color 0f")
     else:
-        os.system("echo -e '\033]0;Dark Proxy V1\007'")
+        os.system("echo -e '\033]0;Eagle Software\007'")
 
     display_ascii_art()
 
