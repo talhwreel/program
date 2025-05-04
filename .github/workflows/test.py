@@ -2,6 +2,7 @@ import os
 import time
 import datetime
 import msvcrt
+import sys  # Programdan çıkmak için gerekli
 from pypresence import Presence
 
 LICENSES = {
@@ -19,13 +20,13 @@ def colored_text(text, color):
 
 def start_discord_presence():
     try:
-        client_id = "1352643025288953938"
+        client_id = "1368588698148671488"
         rpc = Presence(client_id)
         rpc.connect()
         rpc.update(
             state="Developed by kaancaliskan",
             details="Bende Eagle Software'nin valorant yazılımını kullanıyorum, sende kullanmaya ne dersin?",
-            large_image="dark",
+            large_image="eagle",
             start=time.time(),
             buttons=[
                 {"label": "Telegram", "url": "https://t.me/eaglesoftwar2"},
@@ -99,13 +100,13 @@ def show_menu(username):
         print(colored_text("\nHile menüsüne güncelleme gelmedi, güncelleme bekleniyor...", 'red'))
         time.sleep(5) 
         print(colored_text("Program kapatılıyor...", 'red'))
-        exit()
+        sys.exit()  # exit() yerine sys.exit()
     elif choice == "2":
         print(colored_text("Çıkış yapılıyor...", 'red'))
-        exit()
+        sys.exit()  # exit() yerine sys.exit()
     else:
         print(colored_text("Geçersiz seçim! Tekrar deneyin.", 'red'))
-        show_menu(username) 
+        show_menu(username)
 
 def main():
     if os.name == 'nt':
