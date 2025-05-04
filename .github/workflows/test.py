@@ -97,7 +97,7 @@ def show_menu(username):
     choice = input(colored_text("\nSeçiminizi yapınız: ", 'yellow'))
     
     if choice == "1":
-        print(colored_text("\nHile menüsüne güncelleme gelmedi, güncelleme bekleniyor...", 'red'))
+        print(colored_text("\nGüncelleme bekleniyor, lütfen sabırla bekleyiniz..", 'red'))
         time.sleep(5) 
         print(colored_text("Program kapatılıyor...", 'red'))
         sys.exit()  # exit() yerine sys.exit()
