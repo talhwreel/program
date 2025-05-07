@@ -8,7 +8,7 @@ from pypresence import Presence
 LICENSES = {
     "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "testkey": {"username": "Berkay Çalışkan", "expiration_date": "2025-05-06"},
-    "testkeynew": {"username": "Tester", "expiration_date": "2025-05-08"},
+    "testkeynew": {"username": "Tester", "expiration_date": "2026-05-08"},
 }
 
 LOG_DIR = "C:\\EagleLog"
