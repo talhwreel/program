@@ -4,11 +4,13 @@ import datetime
 import sys
 import msvcrt
 from pypresence import Presence
+import psutil
 
 LICENSES = {
     "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
         "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
+        "test": {"username": "tester", "expiration_date": "2028-06-10"},
 }
 
 LOG_DIR = "C:\\EagleLog"
@@ -97,14 +99,32 @@ def flashing_text(text, duration=3, delay=0.3):
 
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
-    flashing_text("1. Hileyi aktif et " + colored_text("(Güncelleme Bekleniyor.)", 'red'), duration=2)
+    flashing_text("1. Hileyi aktif et " + colored_text("(Aktif)", 'green'), duration=2)
     print(colored_text("\n2. Çıkış", 'red'))
     choice = input(colored_text("\nSeçiminizi yapınız: ", 'yellow'))
+    
     if choice == "1":
-        print(colored_text("\nGüncelleme bekleniyor, lütfen sabırla bekleyiniz..", 'red'))
+        print(colored_text("\nValorant bekleniyor...", 'yellow'))
+        found = False
+        for proc in psutil.process_iter(['pid', 'name']):
+            try:
+                if proc.info['name'].lower() == "valorant.exe":
+                    print(colored_text(f"Valorant algılandı {proc.info['pid']}", 'green'))
+                    found = True
+                    break
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+
+        if not found:
+            print(colored_text("Lütfen valorantı başlatın!", 'red'))
+            time.sleep(5)
+            sys.exit()
+
+        time.sleep(3)
+        print(colored_text("Hile aktif edildi. Insert ile menüye ulaşabilirsiniz.", 'green'))
         time.sleep(5)
-        print(colored_text("Program kapatılıyor...", 'red'))
         sys.exit()
+
     elif choice == "2":
         print(colored_text("Çıkış yapılıyor...", 'red'))
         sys.exit()
