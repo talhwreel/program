@@ -3,14 +3,14 @@ import time
 import datetime
 import sys
 import msvcrt
+import subprocess
 from pypresence import Presence
-import psutil
 
 LICENSES = {
     "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
-        "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
-        "test": {"username": "tester", "expiration_date": "2028-06-10"},
+    "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
+    "test": {"username": "tester", "expiration_date": "2028-06-10"},
 }
 
 LOG_DIR = "C:\\EagleLog"
@@ -60,7 +60,7 @@ _/ __ \\__  \   / ___\|  | _/ __ \
 \  ___/ / __ \_/ /_/  >  |_\  ___/                       
  \___  >____  /\___  /|____/\___  >                      
      \/     \//_____/           \/                       
-              _____  __                                 
+              _____  __                                
   ___________/ ____\/  |___  _  _______ _______   ____  
  /  ___/  _ \   __\\   __\ \/ \/ /\__  \\_  __ \_/ __ \ 
  \___ (  <_> )  |   |  |  \     /  / __ \|  | \/\  ___/ 
@@ -97,6 +97,13 @@ def flashing_text(text, duration=3, delay=0.3):
             time.sleep(delay)
     print(f"\r{colored_text(text, 'green')}")
 
+def is_valorant_running():
+    try:
+        output = subprocess.check_output('tasklist', shell=True).decode()
+        return "VALORANT.exe" in output or "valorant.exe" in output
+    except subprocess.CalledProcessError:
+        return False
+
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
     flashing_text("1. Hileyi aktif et " + colored_text("(Aktif)", 'green'), duration=2)
@@ -105,17 +112,9 @@ def show_menu(username):
     
     if choice == "1":
         print(colored_text("\nValorant bekleniyor...", 'yellow'))
-        found = False
-        for proc in psutil.process_iter(['pid', 'name']):
-            try:
-                if proc.info['name'].lower() == "valorant.exe":
-                    print(colored_text(f"Valorant algılandı {proc.info['pid']}", 'green'))
-                    found = True
-                    break
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                continue
-
-        if not found:
+        if is_valorant_running():
+            print(colored_text("Valorant algılandı!", 'green'))
+        else:
             print(colored_text("Lütfen valorantı başlatın!", 'red'))
             time.sleep(5)
             sys.exit()
