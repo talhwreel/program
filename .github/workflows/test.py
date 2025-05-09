@@ -10,7 +10,7 @@ LICENSES = {
     "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
     "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
-    "test": {"username": "tester", "expiration_date": "2028-06-10"},
+    "tester": {"username": "tester", "expiration_date": "2028-06-10"},
 }
 
 LOG_DIR = "C:\\EagleLog"
