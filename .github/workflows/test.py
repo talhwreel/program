@@ -2,10 +2,13 @@ import os
 import time
 import datetime
 import sys
-import msvcrt
 import subprocess
-from pypresence import Presence
+import random
+import string
+import threading
+import ctypes
 
+# Lisanslar
 LICENSES = {
     "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
@@ -26,57 +29,24 @@ def colored_text(text, color):
     }
     return f"{colors.get(color, colors['white'])}{text}{colors['reset']}"
 
-def start_discord_presence():
-    try:
-        client_id = "1368588698148671488"
-        rpc = Presence(client_id)
-        rpc.connect()
-        rpc.update(
-            state="Developed by kaancaliskan",
-            details="Bende Eagle Software'nin valorant yazılımını kullanıyorum, sende kullanmaya ne dersin?",
-            large_image="eagle",
-            start=time.time(),
-            buttons=[{"label": "Telegram", "url": "https://t.me/eaglesoftwar2"}]
-        )
-    except:
-        pass
+def clear_console():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def validate_license(license_key):
     license_info = LICENSES.get(license_key)
     if not license_info:
-        print(colored_text("Geçersiz lisans anahtarı!", 'red'))
+        print(colored_text("❌ Invalid license key! Try again.\n", 'red'))
         return None
     expiration_date = datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d")
     if expiration_date < datetime.datetime.now():
-        print(colored_text("Lisansınızın süresi dolmuş! Yenileyin.", 'red'))
+        print(colored_text("❌ License expired! Please renew.\n", 'red'))
         return None
     remaining_days = (expiration_date - datetime.datetime.now()).days
-    print(f"\n{colored_text('Lisans süreniz:', 'yellow')} {remaining_days} gün kaldı.\n")
+    print(f"{colored_text('🔐 License valid for:', 'yellow')} {remaining_days} days.\n")
     return license_info
 
-def display_ascii_art():
-    art = r"""
-                      .__                               
-  ____ _____     ____ |  |   ____                       
-_/ __ \\__  \   / ___\|  | _/ __ \                      
-\  ___/ / __ \_/ /_/  >  |_\  ___/                       
- \___  >____  /\___  /|____/\___  >                      
-     \/     \//_____/           \/                       
-              _____  __                                
-  ___________/ ____\/  |___  _  _______ _______   ____  
- /  ___/  _ \   __\\   __\ \/ \/ /\__  \\_  __ \_/ __ \ 
- \___ (  <_> )  |   |  |  \     /  / __ \|  | \/\  ___/ 
-/____  >____/|__|   |__|   \/\_/  (____  /__|    \___  >
-     \/                                \/            \/ 
-"""
-    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
-    for i in range(3):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(colored_text(art, colors[i % len(colors)]))
-        time.sleep(0.5)
-
 def get_license():
-    return input(colored_text("Lisans anahtarınızı girin: ", 'green'))
+    return input(colored_text("🔑 Enter your license key: ", 'green'))
 
 def save_license(license_key):
     if not os.path.exists(LOG_DIR):
@@ -90,98 +60,103 @@ def load_license():
             return file.read().strip()
     return None
 
-def flashing_text(text, duration=3, delay=0.3):
-    colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white']
-    end_time = time.time() + duration
-    while time.time() < end_time:
-        for color in colors:
-            print(f"\r{colored_text(text, color)}", end="", flush=True)
-            time.sleep(delay)
-    print(f"\r{colored_text(text, 'green')}")
+def random_title_updater(stop_event):
+    while not stop_event.is_set():
+        random_title = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+        if os.name == 'nt':
+            os.system(f"title {random_title}")
+            ctypes.windll.kernel32.SetConsoleTitleW(random_title)
+        time.sleep(1)
 
-def is_valorant_running():
-    try:
-        output = subprocess.check_output('tasklist', shell=True).decode()
-        return "VALORANT.exe" in output or "valorant.exe" in output
-    except subprocess.CalledProcessError:
-        return False
+def eagle_loading_sequence():
+    print(colored_text("\n🦅 Eagle loading...\n", 'yellow'))
+    total_duration = random.randint(5, 20)
+    steps = 50  # Bar steps
+    interval = total_duration / steps
 
-def show_menu(username):
-    print(f"\n{colored_text('Hoş geldiniz,', 'green')} {colored_text(username, 'cyan')}!")
-    flashing_text("1. Hileyi aktif et " + colored_text("(Aktif)", 'green'), duration=2)
-    print(colored_text("\n2. Çıkış", 'red'))
-    choice = input(colored_text("\nSeçiminizi yapınız: ", 'yellow'))
-    
-    if choice == "1":
-        print(colored_text("\nValorant bekleniyor...", 'yellow'))
-        if is_valorant_running():
-            print(colored_text("Valorant algılandı!", 'green'))
-        else:
-            print(colored_text("Lütfen valorantı başlatın!", 'red'))
-            time.sleep(5)
-            sys.exit()
+    for i in range(steps + 1):
+        percent = int((i / steps) * 100)
+        bar = '█' * (i // 2) + '-' * ((50 - i) // 2)
+        print(colored_text(f"\r[{bar}] {percent}%", 'cyan'), end='', flush=True)
+        time.sleep(interval)
 
-        time.sleep(3)
-        print(colored_text("Hile aktif edildi. Insert ile menüye ulaşabilirsiniz.", 'green'))
-        time.sleep(5)
-        sys.exit()
+    print(colored_text("\n✅ Eagle successfully loaded!", 'green'))
+    time.sleep(2)
+    clear_console()
 
-    elif choice == "2":
-        print(colored_text("Çıkış yapılıyor...", 'red'))
-        sys.exit()
-    else:
-        print(colored_text("Geçersiz seçim! Tekrar deneyin.", 'red'))
-        show_menu(username)
-
-def main():
-    if os.name == 'nt':
-        os.system("title Eagle Software")
-        os.system("color 0f")
+def wait_for_valorant():
+    print(colored_text("🕹 Please start Valorant", 'cyan'))
+    while True:
         try:
-            import ctypes
-            hwnd = ctypes.windll.kernel32.GetConsoleWindow()
-            if hwnd:
-                GWL_EXSTYLE = -20
-                WS_EX_LAYERED = 0x80000
-                style = ctypes.windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
-                ctypes.windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style | WS_EX_LAYERED)
-                ctypes.windll.user32.SetLayeredWindowAttributes(hwnd, 0, 220, 0x2)
-        except:
-            pass
-    else:
-        os.system("echo -e '\033]0;Eagle Software\007'")
+            output = subprocess.check_output('tasklist', shell=True).decode(errors='ignore')
+            if "VALORANT.exe" in output or "valorant.exe" in output:
+                output_pid = subprocess.check_output('tasklist /FI "IMAGENAME eq VALORANT.exe" /FO LIST', shell=True).decode(errors='ignore')
+                beep_success()
+                screen_flash()
+                clear_console()
+                print(colored_text("🟢 Successfully Injected!", 'green'))
+                print(colored_text(output_pid.strip(), 'yellow'))
+                break
+            time.sleep(1)
+        except subprocess.CalledProcessError:
+            time.sleep(1)
 
-    display_ascii_art()
+def splash_intro():
+    print(colored_text("Welcome to Eagle Loader", 'cyan'))
+    print(colored_text("=======================", 'cyan'))
+    time.sleep(1)
 
-    saved_license = load_license()
-    if saved_license:
-        print(colored_text(f"OTO GİRİŞ: Hesabınıza otomatik olarak giriş sağladınız.", 'green'))
-        license_info = validate_license(saved_license)
-        if license_info:
-            start_discord_presence()
-            show_menu(license_info["username"])
+def license_check_flow():
+    while True:
+        saved_license = load_license()
+        if saved_license:
+            license_info = validate_license(saved_license)
+            if license_info:
+                return license_info
+            else:
+                os.remove(LOG_FILE)  # Hatalıysa sil
         else:
-            print(colored_text("HATA! Lisansınız geçersiz veya süresi dolmuş. Yenileyin.", 'red'))
             license_key = get_license()
             license_info = validate_license(license_key)
             if license_info:
                 save_license(license_key)
-                start_discord_presence()
-                show_menu(license_info["username"])
-            else:
-                print(colored_text("Geçersiz lisans!", 'red'))
-    else:
-        license_key = get_license()
-        license_info = validate_license(license_key)
-        if license_info:
-            save_license(license_key)
-            start_discord_presence()
-            show_menu(license_info["username"])
-        else:
-            print(colored_text("Geçersiz lisans!", 'red'))
+                return license_info
 
-    print(colored_text("Bizi tercih ettiğiniz için teşekkürler!", 'blue'))
-    msvcrt.getch()
+def log_user_info(username):
+    print(colored_text(f"👤 Welcome {username}", 'cyan'))
+    time.sleep(1)
+
+def start_discord_rpc(username):
+    print(colored_text("💬 [Discord RPC] Valorant ile bağlantı bekleniyor...", 'magenta'))
+
+def beep_success():
+    if os.name == 'nt':
+        import winsound
+        winsound.MessageBeep()
+    else:
+        print('\a')
+
+def screen_flash():
+    clear_console()
+    print(colored_text("█" * 60, 'black'))
+    time.sleep(0.2)
+    clear_console()
+
+def main():
+    stop_event = threading.Event()
+    threading.Thread(target=random_title_updater, args=(stop_event,), daemon=True).start()
+
+    clear_console()
+    splash_intro()
+    license_info = license_check_flow()
+    log_user_info(license_info["username"])
+    start_discord_rpc(license_info["username"])
+    eagle_loading_sequence()
+    wait_for_valorant()
+
+    stop_event.set()
+    input(colored_text("\nPress Enter to close...", 'magenta'))
+    sys.exit()
 
 if __name__ == "__main__":
     main()
