@@ -132,7 +132,7 @@ def start_discord_rpc(username):
 def beep_success():
     if os.name == 'nt':
         import winsound
-        winsound.MessageBeep()
+    ctypes.windll.user32.MessageBeep(0)
     else:
         print('\a')
 
