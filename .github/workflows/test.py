@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtGui import QColor, QPainter, QFont, QIcon, QCursor
 
 LICENSES = {
-    "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
+    "k44ncal1smayan36": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
     "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
     "PRKS-EAGLE-S0FTW4RE": {"username": "SYX", "expiration_date": "2025-06-12"},
