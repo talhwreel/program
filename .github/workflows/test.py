@@ -131,10 +131,10 @@ def start_discord_rpc(username):
 
 def beep_success():
     if os.name == 'nt':
-        import winsound
-    ctypes.windll.user32.MessageBeep(0)
+        ctypes.windll.user32.MessageBeep(0)
     else:
         print('\a')
+
 
 def screen_flash():
     clear_console()
