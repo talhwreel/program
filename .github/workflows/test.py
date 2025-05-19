@@ -240,7 +240,7 @@ class FramelessWindow(QWidget):
         QTimer.singleShot(0, self.loading_done)
 
     def loading_done(self):
-        self.status_label.setText("🕹 Valorant başlatılmasını bekliyor...")
+        self.status_label.setText("🕹 Valorant bekleniyor..")
         self.progress_bar.setVisible(False)
         self.valorant_watcher.start()
 
