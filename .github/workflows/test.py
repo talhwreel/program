@@ -149,6 +149,7 @@ class FramelessWindow(QWidget):
         self.license_label.setGeometry(20, 60, 200, 25)
         self.license_input = QLineEdit(self.main_frame)
         self.license_input.setGeometry(20, 90, 380, 30)
+        self.license_input.setEchoMode(QLineEdit.Password)
 
         # Giriş butonu
         self.login_button = QPushButton("Giriş Yap", self.main_frame)
