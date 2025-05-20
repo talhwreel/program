@@ -19,7 +19,7 @@ LICENSES = {
     "RJEH-EAJLE-S07TW4RE": {"username": "Enes", "expiration_date": "2025-06-13"},
     "DHWR-KTHE-S01M0NTH": {"username": "Cankong", "expiration_date": "2025-06-13"},
     "FO36-LAHI-IPFYC6DA": {"username": "Abc12", "expiration_date": "2025-06-19"},
-    {"7YRA-2NKT-YPN4KLYR": {"username": "Demir", "expiration_date": "2025-06-20"},
+    "7YRA-2NKT-YPN4KLYR": {"username": "Demir", "expiration_date": "2025-06-20"},
 }
 
 class ValorantWatcher(QObject):
