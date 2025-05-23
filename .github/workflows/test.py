@@ -214,7 +214,7 @@ class FramelessWindow(QWidget):
         if license_info:
             self.license_info = license_info
             remaining_days = (datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d") - datetime.datetime.now()).days
-            self.status_label.setText(f"Hoşgeldin {license_info['username']}! Lisans süresi: {remaining_days} gün.")
+            self.status_label.setText(f"Hoşgeldin {license_info['username']}! Kalan süreniz: {remaining_days} gün.")
             self.load_button.setEnabled(True)
             self.login_button.setEnabled(False)
             self.license_input.setEnabled(False)
