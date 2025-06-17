@@ -4,23 +4,20 @@ import datetime
 import subprocess
 import threading
 import time
-from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QObject, QSize, QPoint
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QObject, QSize, QPoint, QEasingCurve, QPropertyAnimation, QRect
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout, QMessageBox, QProgressBar, QFrame
+    QVBoxLayout, QHBoxLayout, QMessageBox, QProgressBar, QFrame, QGraphicsDropShadowEffect
 )
 from PyQt5.QtGui import QColor, QPainter, QFont, QIcon, QCursor
 
 LICENSES = {
-    "k44ncal1smayan36": {"username": "Kaan", "expiration_date": "2025-12-31"},
+    "kaancalismayan31": {"username": "Kaan", "expiration_date": "2025-12-31"},
     "berkayfull31de": {"username": "Berkay Çalışkan", "expiration_date": "2027-05-06"},
     "EAGLE-0NE1-M0NT4H": {"username": "Byghostking", "expiration_date": "2025-06-10"},
     "PRKS-EAGLE-S0FTW4RE": {"username": "SYX", "expiration_date": "2025-06-12"},
     "RJEH-EAJLE-S07TW4RE": {"username": "Enes", "expiration_date": "2025-06-13"},
     "DHWR-KTHE-S01M0NTH": {"username": "Cankong", "expiration_date": "2025-06-13"},
-    "FO36-LAHI-IPFYC6DA": {"username": "Abc12", "expiration_date": "2025-06-19"},
-    "7YRA-2NKT-YPN4KLYR": {"username": "Demir", "expiration_date": "2025-06-20"},
-    "UTEO-Z6G3-20TB15B0": {"username": "Omer", "expiration_date": "2025-06-22"},
 }
 
 class ValorantWatcher(QObject):
@@ -60,120 +57,166 @@ class FramelessWindow(QWidget):
         self.setAttribute(Qt.WA_TranslucentBackground)
         self._old_pos = None
 
-        self.resize(420, 320)
+        self.resize(520, 450) # Increased window size for a more spacious layout
         self.setStyleSheet("""
+            /* General Styling for the Main Frame */
             QWidget#MainFrame {
-                background-color: #121212;
-                border-radius: 12px;
+                background-color: #1a1a2e; /* Dark deep blue */
+                border-radius: 20px;
+                border: 2px solid #3a3a50; /* Subtle but visible border */
             }
+
+            /* Global Label Styling */
             QLabel {
-                color: #eee;
-                font-size: 14px;
+                color: #e0e0e0;
+                font-size: 16px;
+                font-family: 'Inter', 'Segoe UI', sans-serif; /* Modern sans-serif font */
+                padding: 2px;
             }
+
+            /* Line Edit (Input Field) Styling */
             QLineEdit {
-                background-color: #222;
-                border: 2px solid #333;
-                border-radius: 6px;
-                padding: 6px;
-                color: #eee;
-                font-size: 14px;
+                background-color: #2b2b40;
+                border: 1px solid #4a4a6e; /* Slightly darker border */
+                border-radius: 12px; /* Softer rounded corners */
+                padding: 12px; /* More padding */
+                color: #e0e0e0;
+                font-size: 16px;
+                font-family: 'Inter', 'Segoe UI', sans-serif;
             }
             QLineEdit:focus {
-                border-color: #00aaff;
-                background-color: #1a1a1a;
+                border-color: #7b42f6; /* Vibrant purple focus color */
+                background-color: #3a3a50;
             }
+
+            /* Push Button Styling */
             QPushButton {
-                background-color: #00aaff;
-                border-radius: 8px;
-                color: #fff;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #7b42f6, stop:1 #a238ed); /* Dynamic purple gradient */
+                border-radius: 15px; /* More rounded buttons */
+                color: #ffffff;
                 font-weight: bold;
-                font-size: 14px;
-                padding: 8px 18px;
+                font-size: 18px;
+                padding: 14px 30px; /* Increased padding for larger touch area */
                 border: none;
+                /* box-shadow doesn't work directly via stylesheet for all widgets in PyQt */
+                /* For visual depth, rely on QGraphicsDropShadowEffect */
             }
             QPushButton:disabled {
-                background-color: #555;
-                color: #999;
+                background: #555;
+                color: #ccc;
             }
             QPushButton:hover:!disabled {
-                background-color: #0099dd;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #6a2ceb, stop:1 #8c26d2); /* Darker gradient on hover */
                 cursor: pointer;
             }
+
+            /* Progress Bar Styling */
             QProgressBar {
-                border: 2px solid #333;
-                border-radius: 8px;
-                background-color: #222;
-                color: #eee;
+                border: 2px solid #4a4a6e;
+                border-radius: 12px;
+                background-color: #2b2b40;
+                color: #e0e0e0;
                 text-align: center;
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+                font-weight: bold;
+                font-size: 15px;
             }
             QProgressBar::chunk {
-                background-color: #00aaff;
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #7b42f6, stop:1 #a238ed); /* Match button gradient */
+                border-radius: 10px; /* Slightly smaller to fit within main bar radius */
+            }
+
+            /* Close Button Specific Styling */
+            QPushButton#btnClose {
+                color: #e0e0e0;
+                background-color: transparent;
+                border: none;
+                font-size: 26px; /* Larger icon */
+                font-weight: bold;
+                padding: 0px;
+                border-radius: 0px;
+            }
+            QPushButton#btnClose:hover {
+                color: #ff5757; /* Brighter red on hover */
+                background-color: #3a3a50;
                 border-radius: 8px;
+            }
+
+            /* Title Bar Styling */
+            QFrame#titleBar {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #33334d, stop:1 #4a4a6e); /* Darker gradient for title bar */
+                border-top-left-radius: 20px;
+                border-top-right-radius: 20px;
             }
         """)
 
         self.main_frame = QFrame(self)
         self.main_frame.setObjectName("MainFrame")
-        self.main_frame.setGeometry(0, 0, 420, 320)
+        self.main_frame.setGeometry(0, 0, self.width(), self.height())
 
-        # Custom title bar (üst çubuk)
+        # Add shadow effect to the main frame
+        self.shadow_effect = QGraphicsDropShadowEffect(self)
+        self.shadow_effect.setBlurRadius(30) # More pronounced shadow
+        self.shadow_effect.setXOffset(0)
+        self.shadow_effect.setYOffset(0)
+        self.shadow_effect.setColor(QColor(0, 0, 0, 200)) # Darker shadow
+        self.main_frame.setGraphicsEffect(self.shadow_effect)
+
+        # Custom title bar
         self.title_bar = QFrame(self.main_frame)
-        self.title_bar.setGeometry(0, 0, 420, 40)
-        self.title_bar.setStyleSheet("background-color: #1a1a1a; border-top-left-radius:12px; border-top-right-radius:12px;")
+        self.title_bar.setObjectName("titleBar")
+        self.title_bar.setGeometry(0, 0, self.width(), 55) # Taller title bar
         self.title_bar.mousePressEvent = self.title_mouse_press
         self.title_bar.mouseMoveEvent = self.title_mouse_move
 
         # Title Label
         self.title_label = QLabel("Eagle Loader", self.title_bar)
-        self.title_label.setGeometry(12, 7, 200, 25)
-        self.title_label.setStyleSheet("color:#00aaff; font-weight: bold; font-size: 16px;")
+        self.title_label.setGeometry(30, 15, 200, 25) # Adjusted position
+        self.title_label.setStyleSheet("color:#a238ed; font-weight: bold; font-size: 22px; font-family: 'Inter', sans-serif;") # Brighter purple title
 
         # Close Button
         self.btn_close = QPushButton("✕", self.title_bar)
-        self.btn_close.setGeometry(380, 5, 35, 30)
-        self.btn_close.setStyleSheet("""
-            QPushButton {
-                color: #eee;
-                background-color: transparent;
-                border: none;
-                font-size: 20px;
-            }
-            QPushButton:hover {
-                color: red;
-                background-color: #330000;
-                border-radius: 6px;
-            }
-        """)
+        self.btn_close.setObjectName("btnClose")
+        self.btn_close.setGeometry(self.width() - 55, 12, 45, 40) # Adjusted position and size
         self.btn_close.clicked.connect(self.close)
 
-        # Lisans giriş
-        self.license_label = QLabel("Lisans Anahtarı:", self.main_frame)
-        self.license_label.setGeometry(20, 60, 200, 25)
+        # Main layout for content
+        self.content_layout = QVBoxLayout(self.main_frame)
+        self.content_layout.setContentsMargins(50, 90, 50, 50) # Increased margins for spaciousness
+        self.content_layout.setSpacing(25) # Increased spacing between widgets
+
+        # License input
+        self.license_label = QLabel("License Key:", self.main_frame)
         self.license_input = QLineEdit(self.main_frame)
-        self.license_input.setGeometry(20, 90, 380, 30)
-        self.license_input.setEchoMode(QLineEdit.Password)
+        self.license_input.setPlaceholderText("Enter your license key here...")
 
-        # Giriş butonu
-        self.login_button = QPushButton("Giriş Yap", self.main_frame)
-        self.login_button.setGeometry(20, 130, 180, 38)
-
-        # Load Cheat butonu
+        # Buttons layout
+        self.button_layout = QHBoxLayout()
+        self.button_layout.setSpacing(20) # Spacing between buttons
+        self.login_button = QPushButton("Login", self.main_frame)
         self.load_button = QPushButton("Load Cheat", self.main_frame)
-        self.load_button.setGeometry(220, 130, 180, 38)
         self.load_button.setEnabled(False)
+        self.button_layout.addWidget(self.login_button)
+        self.button_layout.addWidget(self.load_button)
 
-        # Durum Label
+        # Status Label
         self.status_label = QLabel("", self.main_frame)
-        self.status_label.setGeometry(20, 180, 380, 40)
-        self.status_label.setWordWrap(True)
+        self.status_label.setAlignment(Qt.AlignCenter)
 
         # Progress Bar
         self.progress_bar = QProgressBar(self.main_frame)
-        self.progress_bar.setGeometry(20, 220, 380, 25)
         self.progress_bar.setValue(0)
         self.progress_bar.setVisible(False)
+        self.progress_bar.setTextVisible(True) # Show percentage text
 
-        # Sinyaller
+        self.content_layout.addWidget(self.license_label)
+        self.content_layout.addWidget(self.license_input)
+        self.content_layout.addLayout(self.button_layout)
+        self.content_layout.addWidget(self.status_label)
+        self.content_layout.addWidget(self.progress_bar)
+        self.content_layout.addStretch()
+
+        # Signals
         self.login_button.clicked.connect(self.handle_login)
         self.load_button.clicked.connect(self.handle_load_cheat)
 
@@ -183,6 +226,22 @@ class FramelessWindow(QWidget):
 
         self.loading = False
         self.cheat_loaded = False
+
+        # Animations
+        self.fade_anim = QPropertyAnimation(self, b"windowOpacity")
+        self.fade_anim.setDuration(500) # Slower fade-in for elegance
+        self.fade_anim.setStartValue(0.0)
+        self.fade_anim.setEndValue(1.0)
+        self.fade_anim.setEasingCurve(QEasingCurve.OutQuad)
+
+        self.shake_anim = QPropertyAnimation(self, b"pos")
+        self.shake_anim.setDuration(250) # Shake duration
+        self.shake_anim.setLoopCount(4) # More shakes
+        self.shake_anim.setEasingCurve(QEasingCurve.InOutSine)
+
+    def showEvent(self, event):
+        self.fade_anim.start()
+        super().showEvent(event)
 
     def title_mouse_press(self, event):
         if event.button() == Qt.LeftButton:
@@ -194,30 +253,87 @@ class FramelessWindow(QWidget):
             self.move(self.x() + delta.x(), self.y() + delta.y())
             self._old_pos = event.globalPos()
 
+    def shake_window(self):
+        original_pos = self.pos()
+        self.shake_anim.setStartValue(original_pos)
+        self.shake_anim.setKeyValueAt(0.1, QPoint(original_pos.x() - 10, original_pos.y()))
+        self.shake_anim.setKeyValueAt(0.2, QPoint(original_pos.x() + 10, original_pos.y()))
+        self.shake_anim.setKeyValueAt(0.3, QPoint(original_pos.x() - 10, original_pos.y()))
+        self.shake_anim.setKeyValueAt(0.4, QPoint(original_pos.x() + 10, original_pos.y()))
+        self.shake_anim.setKeyValueAt(0.5, QPoint(original_pos.x() - 10, original_pos.y()))
+        self.shake_anim.setKeyValueAt(0.6, QPoint(original_pos.x() + 10, original_pos.y()))
+        self.shake_anim.setEndValue(original_pos)
+        self.shake_anim.start()
+
     def validate_license(self, license_key):
         license_info = LICENSES.get(license_key)
         if not license_info:
-            QMessageBox.warning(self, "Hata", "❌ Geçersiz lisans anahtarı!")
+            QMessageBox.warning(self, "Error", "❌ Invalid license key!")
+            self.shake_window()
             return None
         expiration_date = datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d")
-        if expiration_date < datetime.datetime.now():
-            QMessageBox.warning(self, "Hata", "❌ Lisans süresi dolmuş!")
+        current_time = datetime.datetime.now()
+        if expiration_date < current_time:
+            QMessageBox.warning(self, "Error", "❌ License expired!")
+            self.shake_window()
             return None
         return license_info
 
     def handle_login(self):
         key = self.license_input.text().strip()
         if not key:
-            QMessageBox.warning(self, "Uyarı", "Lütfen lisans anahtarını girin.")
+            QMessageBox.warning(self, "Warning", "Please enter your license key.")
+            self.shake_window()
             return
         license_info = self.validate_license(key)
         if license_info:
             self.license_info = license_info
             remaining_days = (datetime.datetime.strptime(license_info["expiration_date"], "%Y-%m-%d") - datetime.datetime.now()).days
-            self.status_label.setText(f"Hoşgeldin {license_info['username']}! Kalan süreniz: {remaining_days} gün.")
+            self.status_label.setText(f"Welcome {license_info['username']}! License expires in: {remaining_days} days.")
             self.load_button.setEnabled(True)
             self.login_button.setEnabled(False)
             self.license_input.setEnabled(False)
+            self.animate_login_success()
+        else:
+            self.status_label.setText("Login Failed.")
+
+    def animate_login_success(self):
+        login_btn_original_geom = self.login_button.geometry()
+        load_btn_original_geom = self.load_button.geometry()
+
+        # Animate Login button to slide out and hide
+        anim_login_move = QPropertyAnimation(self.login_button, b"pos")
+        anim_login_move.setDuration(400)
+        anim_login_move.setEasingCurve(QEasingCurve.InQuad)
+        anim_login_move.setStartValue(login_btn_original_geom.topLeft())
+        # Move it off to the left, and slightly up
+        anim_login_move.setEndValue(login_btn_original_geom.topLeft() + QPoint(-self.login_button.width() - 100, -30))
+        anim_login_move.start()
+        # Hide the button after its animation completes
+        anim_login_move.finished.connect(lambda: self.login_button.setVisible(False))
+
+        # Animate Load button to grow and take the full width
+        anim_load_geom = QPropertyAnimation(self.load_button, b"geometry")
+        anim_load_geom.setDuration(600) # Slower and more prominent
+        anim_load_geom.setEasingCurve(QEasingCurve.OutElastic)
+
+        # Calculate the target geometry for the load button
+        # It should move to the start X of the button_layout
+        # and span the entire width of the content area.
+        target_width = self.main_frame.width() - self.content_layout.contentsMargins().left() - self.content_layout.contentsMargins().right()
+        
+        # The Y position should remain the same as the original button's Y.
+        button_y = load_btn_original_geom.y() 
+        
+        # The new X position will be the left margin of the content layout.
+        new_x = self.content_layout.contentsMargins().left()
+        
+        new_geometry = QRect(new_x, button_y, target_width, load_btn_original_geom.height())
+
+        anim_load_geom.setStartValue(load_btn_original_geom)
+        anim_load_geom.setEndValue(new_geometry)
+        anim_load_geom.start()
+
 
     def handle_load_cheat(self):
         if self.loading or self.cheat_loaded:
@@ -226,33 +342,36 @@ class FramelessWindow(QWidget):
         self.loading = True
         self.load_button.setEnabled(False)
         self.progress_bar.setVisible(True)
-        self.progress_bar.setValue(0)
-        self.status_label.setText("🦅 Eagle yükleniyor...")
+        self.progress_bar.setValue(0) # Ensure it starts from 0
+        self.status_label.setText("🦅 Loading Eagle...")
+
+        # Apply a prominent shadow effect to the progress bar
+        self.progress_bar.setGraphicsEffect(QGraphicsDropShadowEffect(blurRadius=20, xOffset=5, yOffset=5, color=QColor(0,0,0,150)))
 
         threading.Thread(target=self.load_sequence, daemon=True).start()
 
     def load_sequence(self):
-        steps = 50
+        steps = 100
         for i in range(steps + 1):
-            time.sleep(0.07)
             percent = int((i / steps) * 100)
-            # GUI güncellemesi ana thread'de olmalı, QTimer kullanalım:
+            # Crucially, update the progress bar on the main UI thread.
+            # Using QTimer.singleShot(0, ...) ensures this.
             QTimer.singleShot(0, lambda p=percent: self.progress_bar.setValue(p))
+            time.sleep(0.04) # Slower loading to see animation clearly
 
         QTimer.singleShot(0, self.loading_done)
 
     def loading_done(self):
-        self.status_label.setText("🕹 Valorant bekleniyor..")
+        self.status_label.setText("🕹 Waiting for Valorant to start...")
         self.progress_bar.setVisible(False)
         self.valorant_watcher.start()
 
     def valorant_detected(self):
         self.cheat_loaded = True
         self.loading = False
-        self.status_label.setText("🟢 Valorant bulundu! Inject başarılı.")
+        self.status_label.setText("🟢 Valorant detected! Inject successful.")
         self.load_button.setText("Already Loaded")
         self.load_button.setEnabled(False)
-        self.valorant_watcher.stop()
 
 def main():
     app = QApplication(sys.argv)
